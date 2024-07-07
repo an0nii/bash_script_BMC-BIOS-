@@ -1,0 +1,135 @@
+Гайд по использованию скрипта первоначальной настройки рабочего места разработчика BMC/BIOS.
+
+Необходимая версия ОС: debian-11.7.0-amd64
+
+!Далее все действия осуществляются в терминале!
+
+1 Шаг: Перед запуском скрипта вам необходимо настроить доступ и подключить необходимые репозитории в /etc/apt/sources.list
+(1) Вы должны зайти под root пользователем и выдать себе необходимые права. Сделать это можно при помощи редактирования
+файла /etc/sudoers.tmp. Находясь в root, введите команду "sudo visudo" и далее под коментарием "# User privilege specification"
+вводим "user ALL=(ALL:ALL) NOPASSWD:ALL" (вместо user ваше имя пользователя), выйдите из root командой "exit".
+(2) Далее настройте репозитории:
+Введите "sudo nano /etc/apt/sources.list", удалите всё из этого файла, а после вставте в него следующее:
+```
+deb http://security.debian.org/debian-security bullseye-security main contrib
+deb-src http://security.debian.org/debian-security bullseye-security main contrib
+deb http://deb.debian.org/debian/ bullseye-updates main contrib
+deb-src http://deb.debian.org/debian/ bullseye-updates main contrib
+deb http://mirror.yandex.ru/debian/ bullseye main
+deb-src http://mirror.yandex.ru/debian/ bullseye main
+deb http://mirror.yandex.ru/debian-security bullseye-security main contrib
+deb-src http://mirror.yandex.ru/debian-security bullseye-security main contrib
+deb http://mirror.yandex.ru/debian/ bullseye-updates main contrib
+deb-src http://mirror.yandex.ru/debian/ bullseye-updates main contrib
+```
+Сохраните изменения и выходите из файла, первоначальная настройка завершена!
+
+2 Шаг: Далее вам нужно запустить скрипт на своей виртуальной машине. Вы можете сделать это двумя способами: передать его
+через общую папку или просто скопировать его в файл на виртуальной машине. Здесь будет описан второй способ:
+-"touch yourfilename.sh" создайте файл с расширением ".sh".
+-"nano yourfilename.sh" скопируйте скрипт и вставьте его в этот файл.
+-"chmod +x yourfilename.sh" сделайте файл исполняемым.
+-"./yourfilename.sh" скрипт запущен!
+
+
+
+! Далее будут указаны шаги по работе непосредственно с самим скриптом:
+
+ВАЖНО: В скрипте клонируется репозиторий, перед началом его работы раскомментируйте и отредактируйте соответствующую
+строку: "# sudo -u ${USERNAME} git clone https://github.com/username/repository.git ${WORKDIR}/repository"
+
+Этот скрипт предназначен для автоматизации создания пользователя, настройки рабочей директории
+и установки необходимых компонентов на Linux системе. Скрипт поддерживает как интерактивный режим,
+где пользователю предлагается ввести данные, так и неинтерактивный режим, где все параметры передаются через командную строку.
+
+Содержание:
+1.Описание работы скрипта.
+2.Параметры командной строки.
+3.Интерактивный режим.
+4.Примеры использования.
+5.Создание пользователя и рабочей директории.
+6.Генерация SSH ключей и клонирование репозитория.
+
+1.Описание работы скрипта:
+
+Скрипт выполняет следующие основные задачи:
+-Создание пользователя и рабочей директории.
+-Добавление поддержки архитектуры i386.
+-Установку и обновление необходимых пакетов.
+-Настройку окружения для разработки (установка pip, npm, grunt, и т.д.).
+-Создание SSH ключа и вывод публичного ключа для копирования.
+-Клонирование репозитория с git.
+
+2.Параметры командной строки:
+
+Скрипт поддерживает следующие аргументы:
+- -u <username>: Имя пользователя, которое будет создано (используется в неинтерактивном режиме).
+- -d <working_directory>: Рабочая директория для пользователя (используется в неинтерактивном режиме).
+- -i: Включает интерактивный режим.
+- -h: Показывает справку и завершает выполнение.
+
+3.Интерактивный режим:
+
+Если вы используете интерактивный режим (-i), скрипт предложит вам ввести имя пользователя и рабочую директорию.
+
+4.Примеры использования:
+
+Создание пользователя и рабочей директории (неинтерактивный режим):
+"./yourfilename.sh -u newuser -d /home/newuser"
+
+Интерактивный режим:
+"./yourfilename.sh -i"
+
+Вызов справки:
+"./yourfilename.sh -h"
+
+5.Создание пользователя и рабочей директории:
+
+Скрипт определяет текущего пользователя и рабочую директорию. Если они не указаны, используются значения по умолчанию
+(whoami и pwd) (если включен интерактивный режим, то скрипт запросит у вас эти параметры).
+
+6.Генерация ssh ключей и клонирование репозитория:
+
+Скрипт создает ssh ключ для нового пользователя и выводит его публичный ключ для копирования.
+После этого скрипт ставится на паузу, чтобы вы могли добавить ключ в ваш git репозиторий.
+
+
+
+! Далее будет описана последовательность действий при отсутвии скрипта:
+
+В начале вам необходимо выполнить действия аналогичные подготовке к запуску скрипта,
+далее последовательно введите команды:
+
+-"sudo dpkg --add-architecture i386" так вы добавляете поддержку архитектуры i386 (32-bit)
+в систему(нужно для ...:i386 пакетов).
+
+Установите обновления системы:
+-"sudo apt-get update" 
+-"sudo apt-get upgrade -y"
+
+Теперь установите необходимые пакеты:
+-"sudo apt-get install -y python2 libc6:i386 zlib1g:i386 libpcre3-dev nodejs npm luajit rename
+php-cli fakeroot libfakeroot:i386 locales locales-all sudo mc bc git curl libcurl4 flex bison
+automake pkg-config libtool vim libssl-dev rename mtd-utils squashfs-tools wget git-lfs"
+
+В связи с недоступностью pip2 установите его таким способом(Не выполнять при его наличии):
+-"curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py"
+-"sudo python2 get-pip.py"
+
+Создайте симлинк для libfakeroot:
+-"sudo ln -s /usr/lib/i386-linux-gnu/libfakeroot /usr/lib32/libfakeroot"
+-"sudo ln -s /usr/bin/automake /usr/bin/automake-1.14"
+
+Устанавливите grunt и beautifier через npm (используем -g для глобальной установки и
+--save-dev для сохранения в devDependencies) и пакеты для python2 через pip2:
+-"sudo npm install -g grunt-cli"
+-"sudo npm install -g beautifier --save-dev"
+-"sudo pip2 install sentry_sdk gitpython numpy"
+
+Сгенерируйте ssh и подключите и клонируйте git репозиторий:
+-"ssh-keygen -t rsa -b 4096 -N "" -C "" -f ~/.ssh/id_rsa"
+-"cat ~/.ssh/id_rsa.pub"
+При клонировании username и repository заменяем на свои:
+-"git clone https://github.com/username/repository.git ~/repository"
+
+Настройка завершена!
