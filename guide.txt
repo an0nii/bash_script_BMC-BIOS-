@@ -1,14 +1,12 @@
 Гайд по использованию скрипта первоначальной настройки рабочего места разработчика BMC/BIOS.
 
-Необходимая версия ОС: debian-11.7.0-amd64
+Необходимая версия ОС: Debian 11 "Bullseye" или Debian 10 "Buster"
 
 !Далее все действия осуществляются в терминале!
 
-1 Шаг: Перед запуском скрипта вам необходимо настроить доступ и подключить необходимые репозитории в /etc/apt/sources.list
-(1) Вы должны зайти под root пользователем и выдать себе необходимые права. Сделать это можно при помощи редактирования
-файла /etc/sudoers.tmp. Находясь в root, введите команду "sudo visudo" и далее под коментарием "# User privilege specification"
-вводим "user ALL=(ALL:ALL) NOPASSWD:ALL" (вместо user ваше имя пользователя), выйдите из root командой "exit".
-(2) Далее настройте репозитории:
+!Не требуется для Debian 10 "Buster" (Просто заходите в root и запускайте скрипт)!
+1 Шаг: Перед запуском скрипта вам необходимо подключить необходимые репозитории в /etc/apt/sources.list
+Далее настройте репозитории:
 Введите "sudo nano /etc/apt/sources.list", удалите всё из этого файла, а после вставте в него следующее:
 ```
 deb http://security.debian.org/debian-security bullseye-security main contrib
@@ -112,7 +110,7 @@ deb-src http://mirror.yandex.ru/debian/ bullseye-updates main contrib
 php-cli fakeroot libfakeroot:i386 locales locales-all sudo mc bc git curl libcurl4 flex bison
 automake pkg-config libtool vim libssl-dev rename mtd-utils squashfs-tools wget git-lfs"
 
-В связи с недоступностью pip2 установите его таким способом(Не выполнять при его наличии):
+В связи с недоступностью pip2 установите его таким способом(Не в Debian 10 "Buster"):
 -"curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py"
 -"sudo python2 get-pip.py"
 

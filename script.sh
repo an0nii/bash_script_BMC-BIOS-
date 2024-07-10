@@ -49,7 +49,7 @@ apt-get upgrade -y
 
 apt-get install -y python2 libc6:i386 zlib1g:i386 libpcre3-dev nodejs npm luajit rename php-cli fakeroot libfakeroot:i386 locales locales-all sudo mc bc git curl libcurl4 flex bison automake pkg-config libtool vim python-numpy libssl-dev rename mtd-utils squashfs-tools wget git-lfs
 
-# !Раскоментировать если pip2 не установлен!
+# !Раскоментировать если pip2 не установлен Debian 11 "Bullseye"!
 #curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 #sudo python2 get-pip.py
 
